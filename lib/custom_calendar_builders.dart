@@ -78,6 +78,15 @@ class CustomCalendarBuilders {
     );
   }
 
+  Widget todayBuilder(BuildContext context, DateTime day, DateTime focusedDay) {
+    return _CalendarCellTemplate(
+      dayText: day.day.toString(),
+      dayTextColor: _textColor(day),
+      borderColor: Colors.red[200],
+      borderWidth: 3.0,
+    );
+  }
+
   /// 予定のマーカー部分を生成する
   Widget markerBuilder(
     BuildContext context,

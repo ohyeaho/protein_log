@@ -8,9 +8,9 @@ class CalendarModel extends ChangeNotifier {
 
   Future<void> init() async {}
 
-  DateTime get firstDayOfMonth => DateTime(now.year, now.month, 1);
+  DateTime get firstDayOfMonth => DateTime(now.year, now.month - 1, 1);
 
-  DateTime get lastDayOfMonth => DateTime(now.year, now.month + 1, 0);
+  DateTime get lastDayOfMonth => DateTime(now.year, now.month, 31);
 
   void selectDay(DateTime selectedDay, DateTime focusedDay) {
     if (!isSameDay(this.selectedDay, selectedDay)) {

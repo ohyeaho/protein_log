@@ -33,45 +33,45 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    DateTime _focusedDay = DateTime.now();
-    DateTime? _selectedDay;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('たんぱくログ'),
-      ),
-      body: Center(
-        child: TableCalendar(
-          firstDay: DateTime.utc(2020, 1, 1),
-          lastDay: DateTime.utc(2030, 12, 31),
-          focusedDay: _focusedDay,
-          // headerStyle: const HeaderStyle(
-          //   formatButtonVisible: false,
-          // ),
-          selectedDayPredicate: (day) {
-            return isSameDay(_selectedDay, day);
-          },
-          onDaySelected: (selectedDay, focusedDay) {
-            setState(() {
-              _selectedDay = selectedDay;
-              _focusedDay = focusedDay; // update `_focusedDay` here as well
-            });
-          },
-        ),
-      ),
-    );
-  }
-}
+// class MyHomePage extends StatefulWidget {
+//   const MyHomePage({Key? key}) : super(key: key);
+//
+//   @override
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
+//
+// class _MyHomePageState extends State<MyHomePage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     DateTime _focusedDay = DateTime.now();
+//     DateTime? _selectedDay;
+//
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('たんぱくログ'),
+//       ),
+//       body: Center(
+//         child: TableCalendar(
+//           firstDay: DateTime.utc(2020, 1, 1),
+//           lastDay: DateTime.utc(2030, 12, 31),
+//           focusedDay: _focusedDay,
+//           // headerStyle: const HeaderStyle(
+//           //   formatButtonVisible: false,
+//           // ),
+//           selectedDayPredicate: (day) {
+//             return isSameDay(_selectedDay, day);
+//           },
+//           onDaySelected: (selectedDay, focusedDay) {
+//             setState(() {
+//               _selectedDay = selectedDay;
+//               _focusedDay = focusedDay; // update `_focusedDay` here as well
+//             });
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class CalendarScreen extends StatefulWidget {
   @override

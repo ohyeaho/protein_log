@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:protein_log/calendar_model.dart';
 import 'package:protein_log/custom_calendar_builders.dart';
+import 'package:protein_log/day_log.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class CalendarPage extends StatelessWidget {
+class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
+
+  @override
+  _CalendarPageState createState() => _CalendarPageState();
+}
+
+class _CalendarPageState extends State<CalendarPage> {
+  CalendarFormat _calendarFormat = CalendarFormat.month;
+  DateTime _focusedDay = DateTime.now();
+  DateTime? _selectedDay;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = _focusedDay;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,9 +38,17 @@ class CalendarPage extends StatelessWidget {
           body: Column(
             children: [
               TableCalendar<dynamic>(
-                focusedDay: model.focusedDay,
-                firstDay: model.firstDayOfMonth,
+                focusedDay: _focusedDay,
+                firstDay: DateTime(2021, 12, 1),
                 lastDay: model.lastDayOfMonth,
+                calendarFormat: _calendarFormat,
+                onFormatChanged: (format) {
+                  if (_calendarFormat != format) {
+                    setState(() {
+                      _calendarFormat = format;
+                    });
+                  }
+                },
                 locale: Localizations.localeOf(context).languageCode,
                 // markerBuilderの大きさに合わせて調整してください
                 rowHeight: 70,
@@ -35,13 +59,13 @@ class CalendarPage extends StatelessWidget {
                 headerStyle: const HeaderStyle(
                   titleCentered: true,
                   formatButtonVisible: false,
-                  leftChevronVisible: false,
+                  leftChevronVisible: true,
                   rightChevronVisible: false,
                 ),
                 calendarStyle: const CalendarStyle(
                   // true（デフォルト）の場合は
                   // todayBuilderが呼ばれるので設定しましょう
-                  isTodayHighlighted: false,
+                  isTodayHighlighted: true,
                 ),
                 // カスタマイズ用の関数を渡してやりましょう
                 calendarBuilders: CalendarBuilders(
@@ -50,14 +74,39 @@ class CalendarPage extends StatelessWidget {
                   disabledBuilder: customCalendarBuilders.disabledBuilder,
                   selectedBuilder: customCalendarBuilders.selectedBuilder,
                   markerBuilder: customCalendarBuilders.markerBuilder,
+                  todayBuilder: customCalendarBuilders.todayBuilder,
+                  outsideBuilder: customCalendarBuilders.disabledBuilder,
                 ),
+
                 eventLoader: model.fetchScheduleForDay,
                 selectedDayPredicate: (day) {
-                  return isSameDay(model.selectedDay, day);
+                  return isSameDay(_selectedDay, day);
                 },
+                // onDaySelected: (selectedDay, focusedDay) {
+                //   Navigator.push(
+                //     context,
+                //     MaterialPageRoute(builder: (context) => const DayLog()),
+                //   );
+                // },
                 onDaySelected: (selectedDay, focusedDay) {
-                  model.selectDay(selectedDay, focusedDay);
+                  if (!isSameDay(_selectedDay, selectedDay)) {
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DayLog(selectedDay)),
+                    );
+                  }
                 },
+                onPageChanged: (focusedDay) {
+                  _focusedDay = focusedDay;
+                },
+                // onDaySelected: (selectedDay, focusedDay) {
+                //   model.selectDay(selectedDay, focusedDay);
+                // },
               ),
               Expanded(
                 child: Center(
