@@ -3,6 +3,7 @@ import 'package:protein_log/calendar_model.dart';
 import 'package:protein_log/custom_calendar_builders.dart';
 import 'package:protein_log/day_log.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -16,11 +17,33 @@ class _CalendarPageState extends State<CalendarPage> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  int _total = 0;
+
+  void _totalValue(total) {
+    setState(() {
+      _total = total;
+      _setValue();
+    });
+  }
+
+  void _getValue() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _total = prefs.getInt('total') ?? 0;
+    });
+  }
+
+  void _setValue() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('total', _total);
+  }
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
+    _getValue();
+    _totalValue(_total);
   }
 
   @override
@@ -39,7 +62,7 @@ class _CalendarPageState extends State<CalendarPage> {
             children: [
               TableCalendar<dynamic>(
                 focusedDay: _focusedDay,
-                firstDay: DateTime(2021, 12, 1),
+                firstDay: DateTime(2022, 1, 1),
                 lastDay: model.lastDayOfMonth,
                 calendarFormat: _calendarFormat,
                 onFormatChanged: (format) {
@@ -59,7 +82,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 headerStyle: const HeaderStyle(
                   titleCentered: true,
                   formatButtonVisible: false,
-                  leftChevronVisible: true,
+                  leftChevronVisible: false,
                   rightChevronVisible: false,
                 ),
                 calendarStyle: const CalendarStyle(
@@ -74,10 +97,34 @@ class _CalendarPageState extends State<CalendarPage> {
                   disabledBuilder: customCalendarBuilders.disabledBuilder,
                   selectedBuilder: customCalendarBuilders.selectedBuilder,
                   markerBuilder: customCalendarBuilders.markerBuilder,
+                  // markerBuilder: (
+                  //   BuildContext context,
+                  //   DateTime day,
+                  //   List<dynamic> dailyScheduleList,
+                  // ) {
+                  //   final am = dailyScheduleList.first ?? '';
+                  //
+                  //   _scheduleText(String schedule) {
+                  //     if (schedule == 'on') {
+                  //       return Text(
+                  //         '${_total.toString()}g',
+                  //         style: TextStyle(fontWeight: FontWeight.bold),
+                  //       );
+                  //     } else {
+                  //       return const Text('-');
+                  //     }
+                  //   }
+                  //
+                  //   return Padding(
+                  //     padding: const EdgeInsets.only(top: 24),
+                  //     child: Center(
+                  //       child: _scheduleText(am),
+                  //     ),
+                  //   );
+                  // },
                   todayBuilder: customCalendarBuilders.todayBuilder,
                   outsideBuilder: customCalendarBuilders.disabledBuilder,
                 ),
-
                 eventLoader: model.fetchScheduleForDay,
                 selectedDayPredicate: (day) {
                   return isSameDay(_selectedDay, day);
@@ -98,7 +145,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => DayLog(selectedDay)),
-                    );
+                    ).then((total) => {_totalValue(total)});
                   }
                 },
                 onPageChanged: (focusedDay) {
@@ -107,6 +154,27 @@ class _CalendarPageState extends State<CalendarPage> {
                 // onDaySelected: (selectedDay, focusedDay) {
                 //   model.selectDay(selectedDay, focusedDay);
                 // },
+              ),
+              Expanded(
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      // border: Border.all(color: Colors.red),
+                      color: Colors.red,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        _total.toString(),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
               Expanded(
                 child: Center(

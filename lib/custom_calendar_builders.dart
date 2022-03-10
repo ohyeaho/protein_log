@@ -89,22 +89,14 @@ class CustomCalendarBuilders {
 
   /// 予定のマーカー部分を生成する
   Widget markerBuilder(
-    BuildContext context,
-    DateTime day,
-    List<dynamic> dailyScheduleList,
-  ) {
+      BuildContext context, DateTime day, List<dynamic> dailyScheduleList) {
     final am = dailyScheduleList.first ?? '';
-    // final pm = dailyScheduleList.last ?? '';
+    final pm = dailyScheduleList.last ?? '';
 
     _scheduleText(String schedule) {
       if (schedule == 'on') {
         return const Text(
           '00.0g',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        );
-      } else if (schedule == 'off') {
-        return const Text(
-          '×',
           style: TextStyle(fontWeight: FontWeight.bold),
         );
       } else {
@@ -114,15 +106,15 @@ class CustomCalendarBuilders {
 
     return Padding(
       padding: const EdgeInsets.only(top: 24),
-      child: Center(
-        child: _scheduleText(am),
-      ),
-      // child: Column(
-      //   children: [
-      //     _scheduleText(am),
-      //     // _scheduleText(pm),
-      //   ],
+      // child: Center(
+      //   child: _scheduleText(am),
       // ),
+      child: Column(
+        children: [
+          _scheduleText(am),
+          _scheduleText(pm),
+        ],
+      ),
     );
   }
 }
