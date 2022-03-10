@@ -20,61 +20,18 @@ class _CalendarState extends State<Calendar> {
   DateTime focusedDay = DateTime.now();
   DateTime get lastDayOfMonth =>
       DateTime(now.year, now.month + 1, 1).add(const Duration(days: -1));
-  int _total = 0;
-  // DateTime? eventDate;
-  // List<Event>? eventTotal;
-  // final TextEditingController _eventController = TextEditingController();
+  int total = 0;
 
-  // Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
-  //   Map<String, dynamic> newMap = {};
-  //   map.forEach((key, value) {
-  //     newMap[key.toString()] = map[key];
-  //   });
-  //   return newMap;
-  // }
-
-  // late String encoded = json.encode(encodeMap(selectedEvents!));
-
-  // late String encoded = jsonEncode(encodeMap(selectedEvents!));
-
-  void _totalValue(total) async {
+  void _totalValue(_total) async {
     setState(() {
-      _total = total;
-      // print('total: $total');
-      // selectedEvents![selectedDay] = [Event(total.toString())];
-      // print('selectedEvents: $selectedEvents');
-      // _setValue();
+      total = _total;
+      selectedEvents[selectedDay] = [Event(total.toString())];
+      _setValue();
     });
   }
 
   void _setValue() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.setInt('total', _total);
-
-    // final eventData = json.encode({
-    //   'total': _total,
-    //   'selectedDay': selectedDay.toIso8601String(),
-    // });
-    // await prefs.setString('eventData', eventData);
-
-    // Map<String, dynamic> map = {
-    //   'selectedDay': selectedDay.toIso8601String(),
-    //   'total': selectedEvents![selectedDay]
-    // };
-    // String rawJson = jsonEncode(map);
-    // prefs.setString('selectedEvents', rawJson);
-    // prefs.setStringList('selectedEvents', selectedEvents![selectedDay]);
-
-    // Map<String, dynamic> eventData = {
-    //   selectedDay.toIso8601String(): selectedEvents![selectedDay]
-    // };
-    //
-    // final String eventString = json.encode(eventData);
-    //
-    // print('eventString: $eventString');
-    //
-    // prefs.setString('eventString', eventString);
-
     Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
       Map<String, dynamic> newMap = {};
       map.forEach((key, value) {
@@ -92,17 +49,6 @@ class _CalendarState extends State<Calendar> {
 
   void _getValue() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // setState(() {
-    //   _total = prefs.getInt('total') ?? 0;
-    // });
-
-    // final rawJson = prefs.getString('selectedEvents') ?? '';
-    // Map<String, dynamic> map = jsonDecode(rawJson);
-
-    // setState(() {
-    //   final eventData = json.decode(prefs.getString('eventString') ?? '');
-    //   _total = eventData[selectedEvents![selectedDay]] ?? 0;
-    // });
 
     if (!prefs.containsKey('eventString')) {
       return;
@@ -118,14 +64,13 @@ class _CalendarState extends State<Calendar> {
 
     setState(() {
       Map<DateTime, List<dynamic>> newMap = {};
-      // json.decodeでStringをMapへ
       newMap = Map<DateTime, List<dynamic>>.from(
-        // 以下は、実際にはsharedPreferences等を利用し、取得したString値を入れる
         decodeMap(json.decode(prefs.getString('eventString') ?? '')),
       );
-      print('newMap.runtimeType: ${newMap.runtimeType}');
-      print('_getValue newMap: $newMap');
 
+      selectedEvents = newMap;
+
+      ///Map<DateTime, List<Event>>でdecodeできなかったのでコメントアウト
       // String rowJson = prefs.getString('eventString') ?? '';
       // print(rowJson);
       // Map<String, dynamic> map = jsonDecode(rowJson);
@@ -141,8 +86,6 @@ class _CalendarState extends State<Calendar> {
       // });
 
       // print(newMap.cast<DateTime, List<Event>>());
-
-      selectedEvents = newMap;
 
       // print('selectedEvents.runtimeType: ${selectedEvents.runtimeType}');
       // print('_getValue selectedEvents: $selectedEvents');
@@ -191,6 +134,7 @@ class _CalendarState extends State<Calendar> {
     });
   }
 
+  ///shared_preferencesの削除現在は使用してないのでコメントアウト
   void _removeValue() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.remove('eventString');
@@ -203,24 +147,11 @@ class _CalendarState extends State<Calendar> {
   void initState() {
     super.initState();
     _getValue();
-    _totalValue(_total);
-    // print('selectedEvents: $selectedEvents');
-    // selectedEvents = selectedEvents ??
-    //     {
-    //       // DateTime(now.year, now.month, now.day): [Event(title: '0')]
-    //     };
   }
 
   List<dynamic> _getEventsFromDay(DateTime date) {
-    // print('$date: ${selectedEvents![date]}');
     return selectedEvents[date] ?? [];
   }
-
-  // @override
-  // void dispose() {
-  //   _eventController.dispose();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -254,10 +185,7 @@ class _CalendarState extends State<Calendar> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => DayLog(selectDay)),
-              ).then((total) => _totalValue(total));
-              selectedEvents[selectedDay] = [Event(_total.toString())];
-              _setValue();
-              print(focusedDay);
+              ).then((dayTotal) => _totalValue(dayTotal));
             },
             selectedDayPredicate: (DateTime date) {
               return isSameDay(selectedDay, date);
@@ -295,82 +223,18 @@ class _CalendarState extends State<Calendar> {
             calendarBuilders:
                 CalendarBuilders(singleMarkerBuilder: (context, date, event) {
               print('selectedEvents: $selectedEvents');
-              print('--------------------------------------------------------');
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Center(child: Text('${event}g')),
               );
             }),
           ),
-          // ..._getEventsFromDay(selectedDay).map(
-          //   (Event event) => ListTile(
-          //     title: Text(
-          //       event.title,
-          //     ),
-          //   ),
-          // ),
-          Text(_total.toString()),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  _removeValue();
-                },
-                child: Text('reset'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  // print(eventDate);
-                },
-                child: Text('test'),
-              ),
-            ],
-          ),
+          ElevatedButton(
+            onPressed: () => _removeValue(),
+            child: Text('remove'),
+          )
         ],
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () => showDialog(
-      //     context: context,
-      //     builder: (context) => AlertDialog(
-      //       title: Text("Add Event"),
-      //       content: TextFormField(
-      //         controller: _eventController,
-      //       ),
-      //       actions: [
-      //         TextButton(
-      //           child: Text("Cancel"),
-      //           onPressed: () => Navigator.pop(context),
-      //         ),
-      //         TextButton(
-      //           child: Text("Ok"),
-      //           onPressed: () {
-      //             if (_eventController.text.isEmpty) {
-      //             } else {
-      //               if (selectedEvents![selectedDay] != null) {
-      //                 print('hoge');
-      //                 selectedEvents![selectedDay]!.add(
-      //                   Event(title: _eventController.text),
-      //                 );
-      //               } else {
-      //                 print('test');
-      //                 selectedEvents![selectedDay] = [
-      //                   Event(title: _eventController.text)
-      //                 ];
-      //               }
-      //             }
-      //             Navigator.pop(context);
-      //             _eventController.clear();
-      //             setState(() {});
-      //             return;
-      //           },
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      //   label: Text("Add Event"),
-      //   icon: Icon(Icons.add),
-      // ),
     );
   }
 }

@@ -7,5 +7,5 @@ class Event {
 
   String toString() => title;
 
-  Event.fromJson(Map<String, dynamic> json) : title = json['title'];
+  // Event.fromJson(Map<String, dynamic> json) : title = json['title'];
 }

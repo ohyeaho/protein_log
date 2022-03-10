@@ -26,13 +26,6 @@ class _DayLogState extends State<DayLog> {
     double meet = double.parse(meetController.text);
     int total =
         int.parse(otherController.text) + int.parse(meetController.text);
-    // Map<DateTime, List<Event>>? dayTotal;
-    // setState(() {
-    //   dayTotal = {
-    //     widget.selectedDay: [Event(title: total.toString())]
-    //   };
-    //   print('dayTotal: $dayTotal');
-    // });
 
     return WillPopScope(
       onWillPop: () {
