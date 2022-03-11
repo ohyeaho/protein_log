@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:protein_log/day_log.dart';
-import 'package:protein_log/event.dart';
+import 'package:protein_log/goal_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -21,16 +21,18 @@ class _CalendarState extends State<Calendar> {
   DateTime get lastDayOfMonth =>
       DateTime(now.year, now.month + 1, 1).add(const Duration(days: -1));
   int total = 0;
+  int goal = 0;
+  int dayTotal = 0;
 
   void _totalValue(_total) async {
     setState(() {
       total = _total;
-      selectedEvents[selectedDay] = [Event(total.toString())];
-      _setValue();
+      selectedEvents[selectedDay] = [total.toString()];
+      _setSelectedEvents();
     });
   }
 
-  void _setValue() async {
+  void _setSelectedEvents() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
       Map<String, dynamic> newMap = {};
@@ -41,13 +43,10 @@ class _CalendarState extends State<Calendar> {
     }
 
     String testEncoded = json.encode(encodeMap(selectedEvents));
-
-    print('testEncoded: $testEncoded');
-
     prefs.setString('eventString', testEncoded);
   }
 
-  void _getValue() async {
+  void _getSelectedEvents() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
     if (!prefs.containsKey('eventString')) {
@@ -135,18 +134,34 @@ class _CalendarState extends State<Calendar> {
   }
 
   ///shared_preferencesの削除現在は使用してないのでコメントアウト
-  void _removeValue() async {
+  // void _removeValue() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.remove('eventString');
+  //   setState(() {
+  //     selectedEvents = {};
+  //   });
+  // }
+
+  void _setGoal(goalValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove('eventString');
+    prefs.setInt('goal', goalValue);
     setState(() {
-      selectedEvents = {};
+      goal = goalValue;
+    });
+  }
+
+  void _getGoal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      goal = prefs.getInt('goal') ?? 0;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _getValue();
+    _getGoal();
+    _getSelectedEvents();
   }
 
   List<dynamic> _getEventsFromDay(DateTime date) {
@@ -182,9 +197,14 @@ class _CalendarState extends State<Calendar> {
                 selectedDay = selectDay;
                 focusedDay = focusDay;
               });
+              print(
+                  'selectedEvents[selectedDay]: ${selectedEvents[selectedDay]?[0] ?? '0'}');
+              print(selectedEvents[selectedDay]?[0] ?? '0'.runtimeType);
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => DayLog(selectDay)),
+                MaterialPageRoute(
+                    builder: (context) => DayLog(
+                        selectDay, selectedEvents[selectedDay]?[0] ?? '0')),
               ).then((dayTotal) => _totalValue(dayTotal));
             },
             selectedDayPredicate: (DateTime date) {
@@ -229,10 +249,38 @@ class _CalendarState extends State<Calendar> {
               );
             }),
           ),
-          ElevatedButton(
-            onPressed: () => _removeValue(),
-            child: Text('remove'),
-          )
+          Expanded(
+            child: Container(
+              height: 80,
+              color: Colors.white,
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => GoalPage(goal)),
+                    ).then((goalValue) => _setGoal(goalValue));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '目標: ${goal.toString()}g',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  // ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
