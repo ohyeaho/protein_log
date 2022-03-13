@@ -1,206 +1,205 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:protein_log/calendar_model.dart';
-import 'package:protein_log/custom_calendar_builders.dart';
-import 'package:protein_log/day_log.dart';
-import 'package:provider/provider.dart';
+import 'package:protein_log/day_page.dart';
+import 'package:protein_log/goal_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
-  const CalendarPage({Key? key}) : super(key: key);
-
   @override
   _CalendarPageState createState() => _CalendarPageState();
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  CalendarFormat _calendarFormat = CalendarFormat.month;
-  DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
-  int _total = 0;
+  Map<DateTime, List<dynamic>> selectedEvents = {};
+  DateTime now = DateTime.now();
+  DateTime selectedDay = DateTime.now();
+  DateTime focusedDay = DateTime.now();
+  DateTime get lastDayOfMonth =>
+      DateTime(now.year, now.month + 1, 1).add(const Duration(days: -1));
+  int total = 0;
+  int goal = 0;
+  int dayTotal = 0;
 
-  void _totalValue(total) {
+  void _totalValue(_total) async {
     setState(() {
-      _total = total;
-      _setValue();
+      total = _total;
+      selectedEvents[selectedDay] = [total.toString()];
+      _setSelectedEvents();
     });
   }
 
-  void _getValue() async {
+  void _setSelectedEvents() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
+      Map<String, dynamic> newMap = {};
+      map.forEach((key, value) {
+        newMap[key.toString()] = map[key];
+      });
+      return newMap;
+    }
+
+    String testEncoded = json.encode(encodeMap(selectedEvents));
+    prefs.setString('eventString', testEncoded);
+  }
+
+  void _getSelectedEvents() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (!prefs.containsKey('eventString')) {
+      return;
+    }
+
+    Map<DateTime, dynamic> decodeMap(Map<String, dynamic> map) {
+      Map<DateTime, dynamic> newMap = {};
+      map.forEach((key, value) {
+        newMap[DateTime.parse(key)] = map[key];
+      });
+      return newMap;
+    }
+
     setState(() {
-      _total = prefs.getInt('total') ?? 0;
+      Map<DateTime, List<dynamic>> newMap = {};
+      newMap = Map<DateTime, List<dynamic>>.from(
+        decodeMap(json.decode(prefs.getString('eventString') ?? '')),
+      );
+
+      selectedEvents = newMap;
     });
   }
 
-  void _setValue() async {
+  void _setGoal(goalValue) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('total', _total);
+    prefs.setInt('goal', goalValue);
+    setState(() {
+      goal = goalValue;
+    });
+  }
+
+  void _getGoal() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      goal = prefs.getInt('goal') ?? 0;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _selectedDay = _focusedDay;
-    _getValue();
-    _totalValue(_total);
+    _getGoal();
+    _getSelectedEvents();
+  }
+
+  List<dynamic> _getEventsFromDay(DateTime date) {
+    return selectedEvents[date] ?? [];
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<CalendarModel>(
-      create: (_) => CalendarModel()..init(),
-      child: Consumer<CalendarModel>(builder: (context, model, snapshot) {
-        final CustomCalendarBuilders customCalendarBuilders =
-            CustomCalendarBuilders();
-
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('たんぱくログ'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('プロたん'),
+      ),
+      body: Column(
+        children: [
+          TableCalendar(
+            focusedDay: focusedDay,
+            firstDay: DateTime(2022, 1, 1),
+            lastDay: lastDayOfMonth,
+            locale: 'ja_JP',
+            rowHeight: 70,
+            daysOfWeekHeight: 32,
+            startingDayOfWeek: StartingDayOfWeek.sunday,
+            daysOfWeekVisible: true,
+            onDaySelected: (DateTime selectDay, DateTime focusDay) async {
+              setState(() {
+                selectedDay = selectDay;
+                focusedDay = focusDay;
+              });
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DayPage(
+                      selectDay, selectedEvents[selectedDay]?[0] ?? '0'),
+                ),
+              ).then((dayTotal) => _totalValue(dayTotal));
+            },
+            selectedDayPredicate: (DateTime date) {
+              return isSameDay(selectedDay, date);
+            },
+            eventLoader: _getEventsFromDay,
+            calendarStyle: CalendarStyle(
+              isTodayHighlighted: true,
+              selectedDecoration: BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              selectedTextStyle: TextStyle(color: Colors.white),
+              todayDecoration: BoxDecoration(
+                color: Colors.purpleAccent,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              defaultDecoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              weekendDecoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            ),
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              leftChevronVisible: false,
+              rightChevronVisible: false,
+            ),
+            calendarBuilders:
+                CalendarBuilders(singleMarkerBuilder: (context, date, event) {
+              print('selectedEvents: $selectedEvents');
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: Text('${event}g')),
+              );
+            }),
           ),
-          body: Column(
-            children: [
-              TableCalendar<dynamic>(
-                focusedDay: _focusedDay,
-                firstDay: DateTime(2022, 1, 1),
-                lastDay: model.lastDayOfMonth,
-                calendarFormat: _calendarFormat,
-                onFormatChanged: (format) {
-                  if (_calendarFormat != format) {
-                    setState(() {
-                      _calendarFormat = format;
-                    });
-                  }
-                },
-                locale: Localizations.localeOf(context).languageCode,
-                // markerBuilderの大きさに合わせて調整してください
-                rowHeight: 70,
-                // 曜日文字の大きさに合わせて調整してください
-                // 日本語だとこのくらいで見切れなくなります
-                daysOfWeekHeight: 32,
-                // 見た目をスッキリさせるためなのでなくても大丈夫です
-                headerStyle: const HeaderStyle(
-                  titleCentered: true,
-                  formatButtonVisible: false,
-                  leftChevronVisible: false,
-                  rightChevronVisible: false,
-                ),
-                calendarStyle: const CalendarStyle(
-                  // true（デフォルト）の場合は
-                  // todayBuilderが呼ばれるので設定しましょう
-                  isTodayHighlighted: true,
-                ),
-                // カスタマイズ用の関数を渡してやりましょう
-                calendarBuilders: CalendarBuilders(
-                  dowBuilder: customCalendarBuilders.daysOfWeekBuilder,
-                  defaultBuilder: customCalendarBuilders.defaultBuilder,
-                  disabledBuilder: customCalendarBuilders.disabledBuilder,
-                  selectedBuilder: customCalendarBuilders.selectedBuilder,
-                  markerBuilder: customCalendarBuilders.markerBuilder,
-                  // markerBuilder: (
-                  //   BuildContext context,
-                  //   DateTime day,
-                  //   List<dynamic> dailyScheduleList,
-                  // ) {
-                  //   final am = dailyScheduleList.first ?? '';
-                  //
-                  //   _scheduleText(String schedule) {
-                  //     if (schedule == 'on') {
-                  //       return Text(
-                  //         '${_total.toString()}g',
-                  //         style: TextStyle(fontWeight: FontWeight.bold),
-                  //       );
-                  //     } else {
-                  //       return const Text('-');
-                  //     }
-                  //   }
-                  //
-                  //   return Padding(
-                  //     padding: const EdgeInsets.only(top: 24),
-                  //     child: Center(
-                  //       child: _scheduleText(am),
-                  //     ),
-                  //   );
-                  // },
-                  todayBuilder: customCalendarBuilders.todayBuilder,
-                  outsideBuilder: customCalendarBuilders.disabledBuilder,
-                ),
-                eventLoader: model.fetchScheduleForDay,
-                selectedDayPredicate: (day) {
-                  return isSameDay(_selectedDay, day);
-                },
-                // onDaySelected: (selectedDay, focusedDay) {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => const DayLog()),
-                //   );
-                // },
-                onDaySelected: (selectedDay, focusedDay) {
-                  if (!isSameDay(_selectedDay, selectedDay)) {
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
-                    });
+          Expanded(
+            child: Container(
+              height: 80,
+              color: Colors.white,
+              child: Center(
+                child: ElevatedButton(
+                  onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => DayLog(selectedDay, '')),
-                    ).then((total) => {_totalValue(total)});
-                  }
-                },
-                onPageChanged: (focusedDay) {
-                  _focusedDay = focusedDay;
-                },
-                // onDaySelected: (selectedDay, focusedDay) {
-                //   model.selectDay(selectedDay, focusedDay);
-                // },
-              ),
-              Expanded(
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      // border: Border.all(color: Colors.red),
-                      color: Colors.red,
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        _total.toString(),
-                        style: const TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                        ),
+                      MaterialPageRoute(builder: (context) => GoalPage(goal)),
+                    ).then((goalValue) => _setGoal(goalValue));
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      '目標: ${goal.toString()}g',
+                      style: const TextStyle(
+                        fontSize: 22,
+                        color: Colors.white,
                       ),
                     ),
                   ),
+                  // ),
                 ),
               ),
-              Expanded(
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      // border: Border.all(color: Colors.red),
-                      color: Colors.red,
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        '目標: 60.0g',
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        );
-      }),
+        ],
+      ),
     );
   }
 }
