@@ -172,7 +172,7 @@ class _CalendarState extends State<Calendar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('たんぱくログ'),
+        title: const Text('プロたん'),
       ),
       body: Column(
         children: [
@@ -186,7 +186,7 @@ class _CalendarState extends State<Calendar> {
             //     format = _format;
             //   });
             // },
-            locale: Localizations.localeOf(context).languageCode,
+            locale: 'ja_JP',
             rowHeight: 70,
             daysOfWeekHeight: 32,
             startingDayOfWeek: StartingDayOfWeek.sunday,
@@ -197,9 +197,6 @@ class _CalendarState extends State<Calendar> {
                 selectedDay = selectDay;
                 focusedDay = focusDay;
               });
-              print(
-                  'selectedEvents[selectedDay]: ${selectedEvents[selectedDay]?[0] ?? '0'}');
-              print(selectedEvents[selectedDay]?[0] ?? '0'.runtimeType);
               await Navigator.push(
                 context,
                 MaterialPageRoute(
