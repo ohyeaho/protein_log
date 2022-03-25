@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:protein_log/model/admob.dart';
 
 class DayPage extends StatefulWidget {
   DayPage(this.selectedDay, this.event, {Key? key}) : super(key: key);
@@ -33,6 +35,15 @@ class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final BannerAd myBanner = BannerAd(
+      adUnitId: AdMob().getBannerAdUnitId(),
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(),
+    );
+    myBanner.load();
+
     return WillPopScope(
       onWillPop: () {
         Navigator.pop(context, total);
@@ -461,6 +472,10 @@ class _DayPageState extends State<DayPage> {
                   ),
                 ),
               ),
+            ),
+            Container(
+              height: height * 0.06,
+              child: AdWidget(ad: myBanner),
             ),
           ],
         ),

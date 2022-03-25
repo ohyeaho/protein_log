@@ -41,6 +41,7 @@ dependencies:
   provider: ^6.0.2
   shared_preferences: ^2.0.12
   flutter_native_splash: ^2.0.2
+  google_mobile_ads: ^1.1.0
 
 flutter_native_splash:
   image: "images/egg_splash.png"
