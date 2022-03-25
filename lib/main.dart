@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:protein_log/calendar_page.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:protein_log/pages/calendar_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 

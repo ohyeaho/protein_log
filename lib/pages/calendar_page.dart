@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:protein_log/day_page.dart';
-import 'package:protein_log/goal_page.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:protein_log/model/admob.dart';
+import 'package:protein_log/pages/day_page.dart';
+import 'package:protein_log/pages/goal_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -97,6 +99,16 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    // バナー広告をインスタンス化
+    final BannerAd myBanner = BannerAd(
+      adUnitId: AdMobService().getBannerAdUnitId(),
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(),
+    );
+    // バナー広告の読み込み
+    myBanner.load();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('プロたん'),
@@ -167,37 +179,45 @@ class _CalendarPageState extends State<CalendarPage> {
             }),
           ),
           Expanded(
-            child: Container(
-              height: 80,
-              color: Colors.white,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => GoalPage(goal)),
-                    ).then((goalValue) => _setGoal(goalValue));
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '目標: ${goal.toString()}g',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        color: Colors.white,
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: Container(
+                // height: 80,
+                color: Colors.white,
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => GoalPage(goal)),
+                      ).then((goalValue) => _setGoal(goalValue));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '目標: ${goal.toString()}g',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
+                    // ),
                   ),
-                  // ),
                 ),
               ),
             ),
           ),
+          Expanded(
+            flex: 1,
+            child: AdWidget(ad: myBanner),
+          )
         ],
       ),
     );
