@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:protein_log/day_page.dart';
-import 'package:protein_log/goal_page.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:protein_log/model/admob.dart';
+import 'package:protein_log/pages/day_page.dart';
+import 'package:protein_log/pages/goal_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -97,6 +99,15 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final height = MediaQuery.of(context).size.height;
+    final BannerAd myBanner = BannerAd(
+      adUnitId: AdMob().getBannerAdUnitId(),
+      size: AdSize.banner,
+      request: AdRequest(),
+      listener: BannerAdListener(),
+    );
+    myBanner.load();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('プロたん'),
@@ -197,6 +208,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 ),
               ),
             ),
+          ),
+          Container(
+            height: height * 0.06,
+            child: AdWidget(ad: myBanner),
           ),
         ],
       ),

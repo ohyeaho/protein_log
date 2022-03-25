@@ -1,4 +1,4 @@
-package com.example.ProteinLog.protein_log
+package com.ohYeah.ProteinLog
 
 import io.flutter.embedding.android.FlutterActivity
 
