@@ -97,7 +97,10 @@ class CustomCalendarBuilders {
     return Center(
       child: Text(
         '${event}g',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 18,
+        ),
       ),
     );
   }
