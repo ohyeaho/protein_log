@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
+import 'package:protein_log/model/custom_calendar_builders.dart';
 import 'package:protein_log/pages/day_page.dart';
 import 'package:protein_log/pages/goal_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -99,6 +100,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final CustomCalendarBuilders customCalendarBuilders =
+        CustomCalendarBuilders();
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
       adUnitId: AdMob().getBannerAdUnitId(),
@@ -140,42 +143,25 @@ class _CalendarPageState extends State<CalendarPage> {
               return isSameDay(selectedDay, date);
             },
             eventLoader: _getEventsFromDay,
-            calendarStyle: CalendarStyle(
-              isTodayHighlighted: true,
-              selectedDecoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              selectedTextStyle: TextStyle(color: Colors.white),
-              todayDecoration: BoxDecoration(
-                color: Colors.purpleAccent,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              defaultDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              weekendDecoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-            ),
             headerStyle: const HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
               leftChevronVisible: false,
               rightChevronVisible: false,
             ),
-            calendarBuilders:
-                CalendarBuilders(singleMarkerBuilder: (context, date, event) {
-              print('selectedEvents: $selectedEvents');
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(child: Text('${event}g')),
-              );
-            }),
+            calendarStyle: CalendarStyle(
+              isTodayHighlighted: true,
+              markersAutoAligned: false,
+            ),
+            calendarBuilders: CalendarBuilders(
+              dowBuilder: customCalendarBuilders.daysOfWeekBuilder,
+              defaultBuilder: customCalendarBuilders.defaultBuilder,
+              outsideBuilder: customCalendarBuilders.disabledBuilder,
+              disabledBuilder: customCalendarBuilders.disabledBuilder,
+              selectedBuilder: customCalendarBuilders.selectedBuilder,
+              todayBuilder: customCalendarBuilders.todayBuilder,
+              singleMarkerBuilder: customCalendarBuilders.markerBuilder,
+            ),
           ),
           Expanded(
             child: Container(

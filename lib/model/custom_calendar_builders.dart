@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CustomCalendarBuilders {
-  final Color _borderColor = Colors.green[600]!;
+  final Color _borderColor = Colors.grey;
 
   Color _textColor(DateTime day) {
     const _defaultTextColor = Colors.black87;
@@ -12,25 +12,23 @@ class CustomCalendarBuilders {
       return Colors.red;
     }
     if (day.weekday == DateTime.saturday) {
-      return Colors.blue[600]!;
+      return Colors.blue;
     }
     return _defaultTextColor;
   }
 
-  /// 曜日部分を生成する
+  /// 曜日部分
   Widget daysOfWeekBuilder(BuildContext context, DateTime day) {
-    // <TableCalendarの中身からコピペ>
     // アプリの言語設定読み込み
-    final locale = Localizations.localeOf(context).languageCode;
-
+    final locale = 'ja_JP';
     // アプリの言語設定に曜日の文字を対応させる
     final dowText =
         const DaysOfWeekStyle().dowTextFormatter?.call(day, locale) ??
             DateFormat.E(locale).format(day);
-    // </ TableCalendarの中身からコピペ>
 
     return Container(
       decoration: BoxDecoration(
+        color: Colors.blue.withOpacity(0.3),
         border: Border.all(
           width: 0.5,
           color: _borderColor,
@@ -41,79 +39,65 @@ class CustomCalendarBuilders {
           dowText,
           style: TextStyle(
             color: _textColor(day),
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
     );
   }
 
-  /// 通常の日付部分を生成する
+  /// 通常の日付部分
   Widget defaultBuilder(
       BuildContext context, DateTime day, DateTime focusedDay) {
     return _CalendarCellTemplate(
       dayText: day.day.toString(),
       dayTextColor: _textColor(day),
       borderColor: _borderColor,
+      textAlign: Alignment.topLeft,
     );
   }
 
-  /// 有効範囲（firstDay~lastDay）以外の日付部分を生成する
+  /// 有効範囲以外の日付部分
   Widget disabledBuilder(
       BuildContext context, DateTime day, DateTime focusedDay) {
     return _CalendarCellTemplate(
       dayText: day.day.toString(),
       dayTextColor: Colors.grey,
+      backgroundColor: Colors.grey.withOpacity(0.3),
       borderColor: _borderColor,
+      textAlign: Alignment.topLeft,
     );
   }
 
-  /// 選択された日付部分を生成する
+  /// 選択された日付部分
   Widget selectedBuilder(
       BuildContext context, DateTime day, DateTime focusedDay) {
     return _CalendarCellTemplate(
       dayText: day.day.toString(),
       dayTextColor: _textColor(day),
-      borderColor: Colors.red[800],
-      borderWidth: 3.0,
+      backgroundColor: Colors.yellow.withOpacity(0.3),
+      borderColor: _borderColor,
+      textAlign: Alignment.topLeft,
     );
   }
 
+  /// 今日の日付部分
   Widget todayBuilder(BuildContext context, DateTime day, DateTime focusedDay) {
     return _CalendarCellTemplate(
       dayText: day.day.toString(),
       dayTextColor: _textColor(day),
-      borderColor: Colors.red[200],
-      borderWidth: 3.0,
+      backgroundColor: Colors.purpleAccent.withOpacity(0.3),
+      borderColor: _borderColor,
+      textAlign: Alignment.topLeft,
     );
   }
 
-  /// 予定のマーカー部分を生成する
-  Widget markerBuilder(
-      BuildContext context, DateTime day, List<dynamic> dailyScheduleList) {
-    final am = dailyScheduleList.first ?? '';
-    final pm = dailyScheduleList.last ?? '';
-
-    _scheduleText(String schedule) {
-      if (schedule == 'on') {
-        return const Text(
-          '00.0g',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        );
-      } else {
-        return const Text('-');
-      }
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 24),
-      // child: Center(
-      //   child: _scheduleText(am),
-      // ),
-      child: Column(
-        children: [
-          _scheduleText(am),
-          _scheduleText(pm),
-        ],
+  /// 摂取値部分
+  Widget markerBuilder(BuildContext context, DateTime day, event) {
+    return Center(
+      child: Text(
+        '${event}g',
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -126,12 +110,14 @@ class _CalendarCellTemplate extends StatelessWidget {
     Duration? duration,
     Alignment? textAlign,
     Color? dayTextColor,
+    Color? backgroundColor,
     Color? borderColor,
     double? borderWidth,
   })  : dayText = dayText ?? '',
         duration = duration ?? const Duration(milliseconds: 250),
         textAlign = textAlign ?? Alignment.topCenter,
         dayTextColor = dayTextColor ?? Colors.black87,
+        backgroundColor = backgroundColor,
         borderColor = borderColor ?? Colors.black87,
         borderWidth = borderWidth ?? 0.5,
         super(key: key);
@@ -140,6 +126,7 @@ class _CalendarCellTemplate extends StatelessWidget {
   final Color? dayTextColor;
   final Duration duration;
   final Alignment? textAlign;
+  final Color? backgroundColor;
   final Color? borderColor;
   final double borderWidth;
 
@@ -150,6 +137,7 @@ class _CalendarCellTemplate extends StatelessWidget {
       duration: duration,
       margin: EdgeInsets.zero,
       decoration: BoxDecoration(
+        color: backgroundColor,
         border: Border.all(
           color: borderColor ?? defaultBorderColor,
           width: borderWidth,
