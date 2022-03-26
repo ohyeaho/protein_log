@@ -146,6 +146,10 @@ class _CalendarPageState extends State<CalendarPage> {
             headerStyle: const HeaderStyle(
               formatButtonVisible: false,
               titleCentered: true,
+              titleTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 23,
+              ),
               leftChevronVisible: false,
               rightChevronVisible: false,
             ),
