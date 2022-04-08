@@ -42,6 +42,7 @@ dependencies:
   shared_preferences: ^2.0.12
   flutter_native_splash: ^2.0.2
   google_mobile_ads: ^0.13.6
+  app_tracking_transparency: ^2.0.2+1
 
 flutter_native_splash:
   image: "images/egg_splash.png"

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_tracking_transparency/app_tracking_transparency.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
@@ -19,11 +20,18 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime now = DateTime.now();
   DateTime selectedDay = DateTime.now();
   DateTime focusedDay = DateTime.now();
-  DateTime get lastDayOfMonth =>
-      DateTime(now.year, now.month + 1, 1).add(const Duration(days: -1));
+  DateTime get lastDayOfMonth => DateTime(now.year, now.month + 1, 1).add(const Duration(days: -1));
   int total = 0;
   int goal = 0;
   int dayTotal = 0;
+
+  void initPlugin() async {
+    final status = await AppTrackingTransparency.trackingAuthorizationStatus;
+    if (status == TrackingStatus.notDetermined) {
+      await Future.delayed(const Duration(milliseconds: 200));
+      await AppTrackingTransparency.requestTrackingAuthorization();
+    }
+  }
 
   void _totalValue(_total) async {
     setState(() {
@@ -67,7 +75,6 @@ class _CalendarPageState extends State<CalendarPage> {
       newMap = Map<DateTime, List<dynamic>>.from(
         decodeMap(json.decode(prefs.getString('eventString') ?? '')),
       );
-
       selectedEvents = newMap;
     });
   }
@@ -90,6 +97,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) => initPlugin());
     _getGoal();
     _getSelectedEvents();
   }
@@ -100,8 +108,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    final CustomCalendarBuilders customCalendarBuilders =
-        CustomCalendarBuilders();
+    final CustomCalendarBuilders customCalendarBuilders = CustomCalendarBuilders();
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
       adUnitId: AdMob().getBannerAdUnitId(),
@@ -134,8 +141,7 @@ class _CalendarPageState extends State<CalendarPage> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DayPage(
-                      selectDay, selectedEvents[selectedDay]?[0] ?? '0'),
+                  builder: (context) => DayPage(selectDay, selectedEvents[selectedDay]?[0] ?? '0'),
                 ),
               ).then((dayTotal) => _totalValue(dayTotal));
             },
@@ -181,8 +187,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.red,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
