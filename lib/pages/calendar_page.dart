@@ -25,6 +25,7 @@ class _CalendarPageState extends State<CalendarPage> {
   int goal = 0;
   int dayTotal = 0;
 
+  /// AppTrackingTransparency起動method
   void initPlugin() async {
     final status = await AppTrackingTransparency.trackingAuthorizationStatus;
     if (status == TrackingStatus.notDetermined) {
