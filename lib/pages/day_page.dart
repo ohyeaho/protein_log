@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
 import 'package:protein_log/model/protein_data.dart';
 import 'package:protein_log/pages/add_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // class TotalIntake {
 //   final String? proteinName;
@@ -14,8 +17,8 @@ import 'package:protein_log/pages/add_page.dart';
 
 class DayPage extends StatefulWidget {
   DayPage(this.selectedDay, this.event, {Key? key}) : super(key: key);
-  DateTime selectedDay;
-  String event;
+  final DateTime selectedDay;
+  final String event;
 
   @override
   State<DayPage> createState() => _DayPageState();
@@ -23,18 +26,86 @@ class DayPage extends StatefulWidget {
 
 class _DayPageState extends State<DayPage> {
   int? total;
+  ProteinData proteinData = ProteinData();
   // Map<String, int> eachProtein = {};
   // TotalIntake totalIntake = TotalIntake();
 
   List<ProteinData> proteinList = [
-    ProteinData(proteinName: '肉', color: Colors.red.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
-    ProteinData(proteinName: '魚', color: Colors.blue.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
-    ProteinData(proteinName: '豆', color: Colors.green.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
-    ProteinData(proteinName: '乳製品', color: Colors.yellow.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
-    ProteinData(proteinName: '卵', color: Colors.orange.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
-    ProteinData(proteinName: 'プロテイン', color: Colors.grey.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
-    ProteinData(proteinName: 'その他', color: Colors.black.withOpacity(0.4), proteinIntake: 0, controller: TextEditingController(text: '0')),
+    ProteinData(
+        proteinName: '肉',
+        color: Colors.red.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
+    ProteinData(
+        proteinName: '魚',
+        color: Colors.blue.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
+    ProteinData(
+        proteinName: '豆',
+        color: Colors.green.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
+    ProteinData(
+        proteinName: '乳製品',
+        color: Colors.yellow.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
+    ProteinData(
+        proteinName: '卵',
+        color: Colors.orange.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
+    ProteinData(
+        proteinName: 'プロテイン',
+        color: Colors.grey.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
+    ProteinData(
+        proteinName: 'その他',
+        color: Colors.black.withOpacity(0.4),
+        proteinIntake: 0,
+        controller: TextEditingController(
+          text: ProteinData().proteinIntake.toString(),
+        )),
   ];
+
+  void setProteinList() async {
+    List<String> encodeList = proteinList.map((e) => json.encode(e.toJson())).toList();
+    // String encoded = jsonEncode(proteinList);
+    // print(encoded);
+    print(encodeList);
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('proteinList', encodeList);
+  }
+
+  void getProteinList() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var result = prefs.getStringList('proteinList');
+    print(result);
+    //
+    // List<ProteinData> newList = [];
+    // newList =
+
+    if (result != null) {
+      proteinList = result.map((e) => ProteinData.fromJson(json.decode(e))).toList();
+    } else {
+      return;
+    }
+    print(proteinList);
+  }
 
   @override
   void initState() {
@@ -44,6 +115,8 @@ class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
+    Map<DateTime, List<dynamic>> dayTotalData = {widget.selectedDay: proteinList};
+    print(dayTotalData);
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
       adUnitId: AdMob().getBannerAdUnitId(),
@@ -77,7 +150,7 @@ class _DayPageState extends State<DayPage> {
                         proteinName: proteinName,
                         color: Colors.black.withOpacity(0.4),
                         proteinIntake: 0,
-                        controller: TextEditingController(text: '0'),
+                        controller: TextEditingController(text: proteinData.proteinIntake.toString()),
                       ),
                     );
                   } else {
@@ -158,7 +231,7 @@ class _DayPageState extends State<DayPage> {
                                           }
                                           int ans = 0;
                                           for (var i = 0; i < proteinList.length; i++) {
-                                            ans += proteinList[i].proteinIntake!;
+                                            ans += proteinList[i].proteinIntake;
                                           }
                                           total = ans;
                                           // List<int> totalIntakeList = [];
@@ -177,6 +250,14 @@ class _DayPageState extends State<DayPage> {
                       ),
                     );
                   }),
+            ),
+            ElevatedButton(
+              onPressed: () => setProteinList(),
+              child: Text('set'),
+            ),
+            ElevatedButton(
+              onPressed: () => getProteinList(),
+              child: Text('get'),
             ),
             Container(
               height: 80,

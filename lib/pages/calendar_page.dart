@@ -142,7 +142,7 @@ class _CalendarPageState extends State<CalendarPage> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DayPage(selectDay, selectedEvents[selectedDay]?[0] ?? '0'),
+                  builder: (context) => DayPage(selectDay, selectedEvents[selectedDay]![0] ?? '0'),
                 ),
               ).then((dayTotal) => _totalValue(dayTotal));
             },
