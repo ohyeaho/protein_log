@@ -1,12 +1,17 @@
 import 'dart:convert';
 
 import 'package:app_tracking_transparency/app_tracking_transparency.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
 import 'package:protein_log/model/custom_calendar_builders.dart';
+import 'package:protein_log/model/data.dart';
+import 'package:protein_log/model/firebase_auth.dart';
 import 'package:protein_log/pages/day_page.dart';
 import 'package:protein_log/pages/goal_page.dart';
+import 'package:protein_log/pages/sign_in_page.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -122,6 +127,37 @@ class _CalendarPageState extends State<CalendarPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('プロたん'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TestPage(),
+                ),
+              );
+            },
+            child: Text('test'),
+            style: TextButton.styleFrom(primary: Colors.white),
+          ),
+          TextButton(
+            onPressed: () async {
+              await context.read<FirebaseAuthentication>().signOut();
+              FirebaseAuth.instance.authStateChanges().listen((User? user) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Builder(builder: (context) {
+                            return SignInPage();
+                          })),
+                  (_) => false,
+                );
+              });
+            },
+            child: Text('ログアウト'),
+            style: TextButton.styleFrom(primary: Colors.white),
+          )
+        ],
       ),
       body: Column(
         children: [
