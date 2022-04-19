@@ -5,7 +5,7 @@ import 'package:protein_log/model/admob.dart';
 
 class GoalPage extends StatefulWidget {
   GoalPage(this.goal, {Key? key}) : super(key: key);
-  int goal;
+  final int goal;
 
   @override
   State<GoalPage> createState() => _GoalPageState();
@@ -87,9 +87,7 @@ class _GoalPageState extends State<GoalPage> {
                                 textAlign: TextAlign.center,
                                 maxLength: 3,
                                 keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 decoration: InputDecoration(counterText: ''),
                                 onChanged: (text) {
                                   if (text.length > 0) {
@@ -97,8 +95,7 @@ class _GoalPageState extends State<GoalPage> {
                                     setState(() {});
                                   } else {
                                     setState(() {
-                                      this.otherController =
-                                          TextEditingController(text: '0');
+                                      this.otherController = TextEditingController(text: '0');
                                     });
                                   }
                                 },
