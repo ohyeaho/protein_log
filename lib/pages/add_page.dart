@@ -31,12 +31,12 @@ class _AddPageState extends State<AddPage> {
       ),
       body: Center(
         child: Card(
+          elevation: 3,
           clipBehavior: Clip.antiAlias,
           child: SizedBox(
             width: double.infinity,
             height: 80,
             child: Container(
-              color: Colors.black.withOpacity(0.4),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Center(

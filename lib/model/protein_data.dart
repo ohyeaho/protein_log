@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ProteinData {
   final String proteinName;
-  final Color? color;
+  var color;
   int proteinIntake;
   TextEditingController? controller;
 
@@ -15,14 +15,12 @@ class ProteinData {
 
   Map<String, dynamic> toJson() => {
         'proteinName': proteinName,
-        'color': color.toString(),
+        'color': color,
         'proteinIntake': proteinIntake,
-        'controller': controller.toString(),
       };
 
   ProteinData.fromJson(Map<String, dynamic> json)
       : proteinName = json['proteinName'],
-        color = json['color'] as Color,
-        proteinIntake = json['proteinIntake'],
-        controller = json['controller'] as TextEditingController;
+        color = json['color'],
+        proteinIntake = json['proteinIntake'];
 }

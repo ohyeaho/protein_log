@@ -27,96 +27,157 @@ class DayPage extends StatefulWidget {
 class _DayPageState extends State<DayPage> {
   int? total;
   ProteinData proteinData = ProteinData();
+  Map<DateTime, List<dynamic>> dayTotalData = {};
   // Map<String, int> eachProtein = {};
   // TotalIntake totalIntake = TotalIntake();
 
   List<ProteinData> proteinList = [
     ProteinData(
-        proteinName: '肉',
-        color: Colors.red.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: '肉',
+      color: 0x66f44336,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
     ProteinData(
-        proteinName: '魚',
-        color: Colors.blue.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: '魚',
+      color: 0x662196f3,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
     ProteinData(
-        proteinName: '豆',
-        color: Colors.green.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: '豆',
+      color: 0x664caf50,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
     ProteinData(
-        proteinName: '乳製品',
-        color: Colors.yellow.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: '乳製品',
+      color: 0x66ffeb3b,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
     ProteinData(
-        proteinName: '卵',
-        color: Colors.orange.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: '卵',
+      color: 0x66ff9800,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
     ProteinData(
-        proteinName: 'プロテイン',
-        color: Colors.grey.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: 'プロテイン',
+      color: 0x669e9e9e,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
     ProteinData(
-        proteinName: 'その他',
-        color: Colors.black.withOpacity(0.4),
-        proteinIntake: 0,
-        controller: TextEditingController(
-          text: ProteinData().proteinIntake.toString(),
-        )),
+      proteinName: 'その他',
+      color: 0x66000000,
+      proteinIntake: 0,
+      // controller: TextEditingController(text: ProteinData().proteinIntake.toString()),
+    ),
   ];
 
+  // void setProteinList() async {
+  //   List<String> encodeList = proteinList.map((e) => json.encode(e.toJson())).toList();
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.setStringList('proteinList', encodeList);
+  // }
+
+  void dayTotalDataAdd() async {
+    print(proteinList);
+    setState(() {
+      // dayTotalData[widget.selectedDay] = proteinList;
+      setProteinList();
+    });
+  }
+
   void setProteinList() async {
-    List<String> encodeList = proteinList.map((e) => json.encode(e.toJson())).toList();
-    // String encoded = jsonEncode(proteinList);
-    // print(encoded);
-    print(encodeList);
+    // List<String> encodeList = proteinList.map((e) => json.encode(e.toJson())).toList();
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.setStringList('proteinList', encodeList);
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('proteinList', encodeList);
+    Map<String, dynamic> encodeMap(Map<DateTime, dynamic> map) {
+      Map<String, dynamic> newMap = {};
+      map.forEach((key, value) {
+        newMap[key.toString()] = map[key];
+      });
+      return newMap;
+    }
+
+    print('set: $dayTotalData');
+
+    String encodedMap = json.encode(encodeMap(dayTotalData));
+    print(encodedMap);
+    prefs.setString('proteinList', encodedMap);
+    // List<String> encodeList = proteinList.map((e) => json.encode(e.toJson())).toList();
+    // await prefs.setStringList('proteinList', encodeList);
   }
 
   void getProteinList() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var result = prefs.getStringList('proteinList');
-    print(result);
-    //
-    // List<ProteinData> newList = [];
-    // newList =
 
-    if (result != null) {
-      proteinList = result.map((e) => ProteinData.fromJson(json.decode(e))).toList();
-    } else {
+    if (!prefs.containsKey('proteinList')) {
       return;
     }
-    print(proteinList);
+
+    Map<DateTime, dynamic> decodeMap(Map<String, dynamic> map) {
+      Map<DateTime, dynamic> newMap = {};
+      map.forEach((key, value) {
+        newMap[DateTime.parse(key)] = map[key];
+      });
+      return newMap;
+    }
+
+    setState(() {
+      Map<DateTime, List<dynamic>> newMap = {};
+      newMap = Map<DateTime, List<dynamic>>.from(
+        decodeMap(json.decode(prefs.getString('proteinList') ?? '')),
+      );
+      print('newMap: $newMap');
+      dayTotalData = newMap;
+      // dayTotalData = {widget.selectedDay: proteinList};
+      print('dayTotalData: $dayTotalData');
+    });
+    // final SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var result = prefs.getStringList('proteinList');
+    //
+    // if (result != null) {
+    //   setState(() {
+    //     proteinList = result.map((e) => ProteinData.fromJson(json.decode(e))).toList();
+    //     print(proteinList);
+    //   });
+    // } else {
+    //   return;
+    // }
+  }
+
+  void deleteProteinList() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('proteinList');
   }
 
   @override
   void initState() {
     super.initState();
     total = int.parse(widget.event);
+    getProteinList();
+    // if (dayTotalData.containsKey(widget.selectedDay) == true) {
+    //   print('true');
+    // } else {
+    //   setState(() {
+    //     dayTotalData[widget.selectedDay] = proteinList;
+    //   });
+    //   print('false');
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<DateTime, List<dynamic>> dayTotalData = {widget.selectedDay: proteinList};
+    // print(dayTotalData.containsKey(widget.selectedDay));
     print(dayTotalData);
+    dayTotalData.containsKey(widget.selectedDay) == true ? null : dayTotalData[widget.selectedDay] = proteinList;
+    // dayTotalData = {widget.selectedDay: proteinList};
+    // print('start: $dayTotalData');
+
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
       adUnitId: AdMob().getBannerAdUnitId(),
@@ -128,6 +189,7 @@ class _DayPageState extends State<DayPage> {
 
     return WillPopScope(
       onWillPop: () {
+        dayTotalDataAdd();
         Navigator.pop(context, total);
         return Future.value(false);
       },
@@ -148,7 +210,7 @@ class _DayPageState extends State<DayPage> {
                     proteinList.add(
                       ProteinData(
                         proteinName: proteinName,
-                        color: Colors.black.withOpacity(0.4),
+                        color: 0xffffffff,
                         proteinIntake: 0,
                         controller: TextEditingController(text: proteinData.proteinIntake.toString()),
                       ),
@@ -186,9 +248,18 @@ class _DayPageState extends State<DayPage> {
             ),
             Expanded(
               child: ListView.builder(
-                  itemCount: proteinList.length,
+                  // itemCount: proteinList.length,
+                  itemCount: dayTotalData[widget.selectedDay]!.length,
+                  // itemCount: getList!.length,
+                  // itemCount: dayTotalData.containsKey(widget.selectedDay) == true ? dayTotalData[widget.selectedDay]!.length : proteinList.length,
                   itemBuilder: (BuildContext context, int index) {
+                    // print(proteinList[index].proteinName);
+                    // print(dayTotalData[widget.selectedDay]![index]['proteinName']);
+                    // print(dayTotalData[widget.selectedDay]![index]);
+                    // print(dayTotalData[widget.selectedDay]![index].proteinName);
+                    // print(dayTotalData[widget.selectedDay]![index].proteinIntake);
                     return Card(
+                      elevation: 3,
                       clipBehavior: Clip.antiAlias,
                       child: SizedBox(
                         width: double.infinity,
@@ -196,10 +267,30 @@ class _DayPageState extends State<DayPage> {
                           children: [
                             Expanded(
                               child: Container(
-                                color: proteinList[index].color,
-                                child: Padding(
-                                  padding: EdgeInsets.all(13.0),
-                                  child: Center(child: Text(proteinList[index].proteinName)),
+                                // color: Color(proteinList[index].color),
+                                // color: Color(dayTotalData[widget.selectedDay]![index].color),
+                                color: Color(dayTotalData[widget.selectedDay]![index]['color']),
+                                // color: Color(getList[index].color ?? getList[index]['color']),
+                                // color: Color(
+                                //   dayTotalData.containsKey(widget.selectedDay) == true
+                                //       ? dayTotalData[widget.selectedDay]![index]['color']
+                                //       : proteinList[index].color,
+                                // ),
+                                child: SizedBox(
+                                  height: 50,
+                                  child: Center(
+                                    child: Text(
+                                      // proteinList[index].proteinName,
+                                      // dayTotalData[widget.selectedDay]![index].proteinName,
+                                      dayTotalData[widget.selectedDay]![index]['proteinName'],
+                                      // getList[index].proteinName ?? getList[index]['proteinName'],
+                                      // dayTotalData.containsKey(widget.selectedDay) == true
+                                      //     ? dayTotalData[widget.selectedDay]![index]['proteinName']
+                                      //     : proteinList[index].proteinName,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -209,7 +300,16 @@ class _DayPageState extends State<DayPage> {
                                   children: [
                                     Expanded(
                                       child: TextFormField(
-                                        controller: proteinList[index].controller,
+                                        // controller: proteinList[index].controller,
+                                        // controller: TextEditingController(text: proteinList[index].proteinIntake.toString()),
+                                        // controller: TextEditingController(text: dayTotalData[widget.selectedDay]![index].proteinIntake.toString()),
+                                        controller: TextEditingController(text: dayTotalData[widget.selectedDay]![index]['proteinIntake'].toString()),
+                                        // controller: TextEditingController(text: getList[index].proteinIntake.toString()),
+                                        // controller: TextEditingController(
+                                        //   text: dayTotalData.containsKey(widget.selectedDay) == true
+                                        //       ? dayTotalData[widget.selectedDay]![index]['proteinIntake'].toString()
+                                        //       : proteinList[index].proteinIntake.toString(),
+                                        // ),
                                         textAlign: TextAlign.center,
                                         maxLength: 3,
                                         keyboardType: TextInputType.number,
@@ -219,24 +319,59 @@ class _DayPageState extends State<DayPage> {
                                           if (text.length > 0) {
                                             // 入力値があるなら、それを反映する。
                                             setState(() {
-                                              proteinList[index].proteinIntake = int.parse(text);
-                                              // eachProtein[proteinList[index].proteinName] = int.parse(text);
+                                              // proteinList[index].proteinIntake = int.parse(text);
+                                              // dayTotalData[widget.selectedDay]![index].proteinIntake = int.parse(text);
+                                              dayTotalData[widget.selectedDay]![index]['proteinIntake'] = int.parse(text);
+                                              // getList[index].proteinIntake = int.parse(text);
+                                              // dayTotalData.containsKey(widget.selectedDay) == true
+                                              //     ? dayTotalData[widget.selectedDay]![index]['proteinIntake'] = int.parse(text)
+                                              //     : proteinList[index].proteinIntake = int.parse(text);
                                             });
                                           } else {
                                             setState(() {
-                                              this.proteinList[index].controller = TextEditingController(text: '0');
-                                              proteinList[index].proteinIntake = 0;
-                                              // eachProtein[proteinList[index].proteinName] = 0;
+                                              // this.proteinList[index].controller = TextEditingController(text: '0');
+                                              // proteinList[index].proteinIntake = 0;
+                                              // dayTotalData[widget.selectedDay]![index].controller = TextEditingController(text: '0');
+                                              // dayTotalData[widget.selectedDay]![index].proteinIntake = 0;
+                                              dayTotalData[widget.selectedDay]![index]['controller'] = TextEditingController(text: '0');
+                                              dayTotalData[widget.selectedDay]![index]['proteinIntake'] = 0;
+                                              // getList[index].controller = TextEditingController(text: '0');
+                                              // getList[index].proteinIntake = 0;
+                                              // dayTotalData.containsKey(widget.selectedDay) == true
+                                              //     ? dayTotalData[widget.selectedDay]![index]['controller'] = TextEditingController(text: '0')
+                                              //     : this.proteinList[index].controller = TextEditingController(text: '0');
+                                              // dayTotalData.containsKey(widget.selectedDay) == true
+                                              //     ? dayTotalData[widget.selectedDay]![index]['proteinIntake'] = 0
+                                              //     : proteinList[index].proteinIntake = 0;
                                             });
                                           }
                                           int ans = 0;
-                                          for (var i = 0; i < proteinList.length; i++) {
-                                            ans += proteinList[i].proteinIntake;
+                                          // for (var i = 0; i < proteinList.length; i++) {
+                                          //   ans += proteinList[i].proteinIntake;
+                                          // }
+                                          // total = ans;
+                                          // for (var i = 0; i < dayTotalData[widget.selectedDay]!.length; i++) {
+                                          //   ans += dayTotalData[widget.selectedDay]![i].proteinIntake as int;
+                                          // }
+                                          for (var i = 0; i < dayTotalData[widget.selectedDay]!.length; i++) {
+                                            ans += dayTotalData[widget.selectedDay]![i]['proteinIntake'] as int;
                                           }
+                                          // total = ans;
+                                          // for (var i = 0; i < getList.length; i++) {
+                                          //   ans += getList[i].proteinIntake as int;
+                                          // }
+                                          // total = ans;
+                                          // for (var i = 0;
+                                          //     dayTotalData.containsKey(widget.selectedDay) == true
+                                          //         ? i < dayTotalData[widget.selectedDay]!.length
+                                          //         : i < proteinList.length;
+                                          //     i++) {
+                                          //   // ans += getList[i].proteinIntake as int;
+                                          //   dayTotalData.containsKey(widget.selectedDay) == true
+                                          //       ? ans += dayTotalData[widget.selectedDay]![i]['proteinIntake'] as int
+                                          //       : ans += proteinList[i].proteinIntake;
+                                          // }
                                           total = ans;
-                                          // List<int> totalIntakeList = [];
-                                          // eachProtein.forEach((key, value) => totalIntakeList.add(value));
-                                          // total = totalIntakeList.reduce((value, element) => value + element);
                                         },
                                       ),
                                     ),
@@ -252,12 +387,10 @@ class _DayPageState extends State<DayPage> {
                   }),
             ),
             ElevatedButton(
-              onPressed: () => setProteinList(),
-              child: Text('set'),
-            ),
-            ElevatedButton(
-              onPressed: () => getProteinList(),
-              child: Text('get'),
+              onPressed: () {
+                deleteProteinList();
+              },
+              child: Text('remove'),
             ),
             Container(
               height: 80,
@@ -287,27 +420,6 @@ class _DayPageState extends State<DayPage> {
             ),
           ],
         ),
-        // floatingActionButton: Padding(
-        //   padding: const EdgeInsets.only(bottom: 13.0),
-        //   child: FloatingActionButton(
-        //     onPressed: () async {
-        //       await Navigator.push(
-        //         context,
-        //         MaterialPageRoute(
-        //           builder: (context) => AddPage(),
-        //           fullscreenDialog: true,
-        //         ),
-        //       ).then((proteinName) => proteinList.add(ProteinData(
-        //             proteinName: proteinName,
-        //             color: Colors.black.withOpacity(0.4),
-        //             proteinIntake: 0,
-        //             controller: TextEditingController(text: '0'),
-        //           )));
-        //       setState(() {});
-        //     },
-        //     child: Icon(Icons.add),
-        //   ),
-        // ),
       ),
     );
   }

@@ -109,6 +109,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(selectedEvents);
     final CustomCalendarBuilders customCalendarBuilders = CustomCalendarBuilders();
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
@@ -142,7 +143,7 @@ class _CalendarPageState extends State<CalendarPage> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DayPage(selectDay, selectedEvents[selectedDay]![0] ?? '0'),
+                  builder: (context) => DayPage(selectDay, selectedEvents[selectedDay]?[0] ?? '0'),
                 ),
               ).then((dayTotal) => _totalValue(dayTotal));
             },
@@ -175,9 +176,8 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
           Expanded(
+            flex: 4,
             child: Container(
-              height: 80,
-              color: Colors.white,
               child: Center(
                 child: ElevatedButton(
                   onPressed: () {
@@ -205,9 +205,12 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
             ),
           ),
-          Container(
-            height: height * 0.06,
-            child: AdWidget(ad: myBanner),
+          Expanded(
+            flex: 1,
+            child: Container(
+              height: height * 0.06,
+              child: AdWidget(ad: myBanner),
+            ),
           ),
         ],
       ),
