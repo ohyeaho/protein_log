@@ -41,7 +41,7 @@ class _AddPageState extends State<AddPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Center(
                   child: TextFormField(
-                    decoration: InputDecoration(hintText: '項目名を入力'),
+                    decoration: const InputDecoration(hintText: '項目名を入力'),
                     onChanged: (text) {
                       if (text.isNotEmpty) {
                         setState(() {

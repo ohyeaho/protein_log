@@ -58,11 +58,9 @@ class _CalendarPageState extends State<CalendarPage> {
 
   void _getSelectedEvents() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-
     if (!prefs.containsKey('eventString')) {
       return;
     }
-
     Map<DateTime, dynamic> decodeMap(Map<String, dynamic> map) {
       Map<DateTime, dynamic> newMap = {};
       map.forEach((key, value) {
