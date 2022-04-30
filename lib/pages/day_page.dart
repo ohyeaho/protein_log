@@ -82,6 +82,7 @@ class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('proteinList: $proteinList');
     print(dayTotalData);
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
@@ -105,7 +106,7 @@ class _DayPageState extends State<DayPage> {
           actions: [
             IconButton(
               onPressed: () async {
-                final result = await Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AddPage(),
