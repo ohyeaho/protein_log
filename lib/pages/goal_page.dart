@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
+import 'package:protein_log/pages/intake_calculation_page.dart';
 
 class GoalPage extends StatefulWidget {
   GoalPage(this.goal, {Key? key}) : super(key: key);
-  int goal;
+  final int goal;
 
   @override
   State<GoalPage> createState() => _GoalPageState();
@@ -64,54 +65,66 @@ class _GoalPageState extends State<GoalPage> {
                     child: Row(
                       children: [
                         Expanded(
-                            child: Container(
-                                color: Colors.red,
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: Text(
-                                    '目標値',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  )),
-                                ))),
-                        Expanded(
-                            child: Center(
-                                child: Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: otherController,
-                                textAlign: TextAlign.center,
-                                maxLength: 3,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                                decoration: InputDecoration(counterText: ''),
-                                onChanged: (text) {
-                                  if (text.length > 0) {
-                                    // 入力値があるなら、それを反映する。
-                                    setState(() {});
-                                  } else {
-                                    setState(() {
-                                      this.otherController =
-                                          TextEditingController(text: '0');
-                                    });
-                                  }
-                                },
+                          child: Container(
+                            color: Colors.red,
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Center(
+                                child: Text(
+                                  '目標値',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ),
-                            Text('g'),
-                          ],
-                        ))),
+                          ),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: otherController,
+                                    textAlign: TextAlign.center,
+                                    maxLength: 3,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                    decoration: InputDecoration(counterText: ''),
+                                    onChanged: (text) {
+                                      if (text.length > 0) {
+                                        setState(() {});
+                                      } else {
+                                        setState(() {
+                                          this.otherController = TextEditingController(text: '0');
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                                Text('g'),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
               ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IntakeCalculationPage(),
+                  ),
+                );
+              },
+              child: Text('たんぱく質目安計算'),
             ),
             Container(
               height: height * 0.06,
