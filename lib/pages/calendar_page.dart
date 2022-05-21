@@ -107,7 +107,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(selectedEvents);
     final CustomCalendarBuilders customCalendarBuilders = CustomCalendarBuilders();
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(

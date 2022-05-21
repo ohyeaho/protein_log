@@ -13,6 +13,11 @@ class ProteinData {
     this.controller,
   });
 
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
   Map<String, dynamic> toJson() => {
         'proteinName': proteinName,
         'color': color,
