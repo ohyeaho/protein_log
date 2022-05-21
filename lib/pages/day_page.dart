@@ -82,8 +82,6 @@ class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('proteinList: $proteinList');
-    print(dayTotalData);
     final height = MediaQuery.of(context).size.height;
     final BannerAd myBanner = BannerAd(
       adUnitId: AdMob().getBannerAdUnitId(),
@@ -120,8 +118,6 @@ class _DayPageState extends State<DayPage> {
                       //     ProteinData(
                       //       proteinName: proteinName,
                       //       color: 0xffffffff,
-                      //       proteinIntake: 0,
-                      //       controller: TextEditingController(text: proteinData.proteinIntake.toString()),
                       //     ),
                       //   );
                       //   return value;
@@ -129,30 +125,21 @@ class _DayPageState extends State<DayPage> {
 
                       dayTotalData.update(widget.selectedDay, (value) {
                         value.add(
-                          ProteinData(
-                            proteinName: proteinName,
-                            color: 0xffffffff,
-                            proteinIntake: 0,
-                            controller: TextEditingController(text: proteinData.proteinIntake.toString()),
-                          ),
+                          ProteinData(proteinName: proteinName, color: 0xffffffff),
                         );
                         return value;
                       });
+                      setProteinList();
                     } else {
                       proteinList.add(
-                        ProteinData(
-                          proteinName: proteinName,
-                          color: 0xffffffff,
-                          proteinIntake: 0,
-                          controller: TextEditingController(text: proteinData.proteinIntake.toString()),
-                        ),
+                        ProteinData(proteinName: proteinName, color: 0xffffffff),
                       );
-                      print('proteinList: $proteinList');
                     }
                   } else {
                     return null;
                   }
                 });
+                getProteinList();
                 setState(() {});
               },
               icon: Icon(Icons.add),
@@ -194,9 +181,7 @@ class _DayPageState extends State<DayPage> {
                             Expanded(
                               child: Container(
                                 color: Color(
-                                  // todo: nullチェックで確認 dayTotalData[widget.selectedDay]![index]['color'] != null
                                   dayTotalData.containsKey(widget.selectedDay) == true
-                                      // dayTotalData[widget.selectedDay]![index]['color'] != null
                                       ? dayTotalData[widget.selectedDay]![index]['color']
                                       : proteinList[index].color,
                                 ),
@@ -205,7 +190,6 @@ class _DayPageState extends State<DayPage> {
                                   child: Center(
                                     child: Text(
                                       dayTotalData.containsKey(widget.selectedDay) == true
-                                          // dayTotalData[widget.selectedDay]![index]['proteinName'] != null
                                           ? dayTotalData[widget.selectedDay]![index]['proteinName']
                                           : proteinList[index].proteinName,
                                       maxLines: 2,
@@ -223,7 +207,6 @@ class _DayPageState extends State<DayPage> {
                                       child: TextFormField(
                                         controller: TextEditingController(
                                           text: dayTotalData.containsKey(widget.selectedDay) == true
-                                              // text: dayTotalData[widget.selectedDay]![index]['proteinIntake'] != null
                                               ? dayTotalData[widget.selectedDay]![index]['proteinIntake'].toString()
                                               : proteinList[index].proteinIntake.toString(),
                                         ),
@@ -237,7 +220,6 @@ class _DayPageState extends State<DayPage> {
                                             // 入力値があるなら、それを反映する。
                                             setState(() {
                                               dayTotalData.containsKey(widget.selectedDay) == true
-                                                  // dayTotalData[widget.selectedDay]![index]['proteinIntake'] != null
                                                   ? dayTotalData[widget.selectedDay]![index]['proteinIntake'] = int.parse(text)
                                                   : proteinList[index].proteinIntake = int.parse(text);
                                             });

@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>「許可」するとお客様に最適化された広告が表示されます</string>
+	<string>表示する広告を適切に選択するために使用します。</string>
 	<key>SKAdNetworkItems</key>
 	<array>
 		<dict>
@@ -200,7 +200,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
-	<key>NSUserTrackingUsageDescription</key>
-        <string>表示する広告を適切に選択するために使用します。</string>
 </dict>
 </plist>
