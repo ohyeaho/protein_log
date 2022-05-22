@@ -54,7 +54,6 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
               child: Column(
                 children: [
                   Expanded(
-                    flex: 1,
                     child: Card(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -102,17 +101,19 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                               ),
                             ],
                           ),
-                          Container(
-                            width: double.infinity,
-                            child: CupertinoSlider(
-                              value: weight.toDouble(),
-                              min: 0.0,
-                              max: 150.0,
-                              onChanged: (value) {
-                                setState(() {
-                                  weight = value.toInt();
-                                });
-                              },
+                          Expanded(
+                            child: Container(
+                              width: double.infinity,
+                              child: CupertinoSlider(
+                                value: weight.toDouble(),
+                                min: 0.0,
+                                max: 150.0,
+                                onChanged: (value) {
+                                  setState(() {
+                                    weight = value.toInt();
+                                  });
+                                },
+                              ),
                             ),
                           )
                         ],
@@ -120,7 +121,6 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                     ),
                   ),
                   Expanded(
-                    flex: 1,
                     child: Card(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 8.0),
@@ -167,7 +167,6 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                     ),
                   ),
                   Expanded(
-                    flex: 1,
                     child: Card(
                         child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -218,7 +217,6 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                     )),
                   ),
                   Expanded(
-                    flex: 1,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 35.0),
                       child: Container(
@@ -234,16 +232,17 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                               result = calc.resultProtein()!;
                             });
                           },
-                          child: Text(
-                            '計算',
-                            style: TextStyle(fontSize: 25),
+                          child: FittedBox(
+                            child: Text(
+                              '計算',
+                              style: TextStyle(fontSize: 25),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
                   Expanded(
-                    flex: 1,
                     child: Card(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -251,18 +250,22 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                '１日に必要なたんぱく質目安量',
-                                style: TextStyle(fontSize: 20),
-                              ),
                               FittedBox(
                                 child: Text(
-                                  '${result}g',
-                                  style: TextStyle(
-                                    fontSize: 50,
-                                    fontWeight: FontWeight.w600,
+                                  '１日に必要なたんぱく質目安量',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
+                              Expanded(
+                                child: FittedBox(
+                                  child: Text(
+                                    '${result}g',
+                                    style: TextStyle(
+                                      fontSize: 50,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    maxLines: 1,
                                   ),
-                                  maxLines: 1,
                                 ),
                               ),
                             ],
