@@ -63,7 +63,7 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                         ),
                         SizedBox(height: 10),
                         Text(
-                          '日本での評価',
+                          '日本肥満学会の判断基準',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Container(
@@ -112,6 +112,74 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                                 cells: [
                                   DataCell(Text('40以上')),
                                   DataCell(Text('肥満(4度)')),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          '世界保健機関(WHO)の判定基準',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Container(
+                          child: DataTable(
+                            dataRowHeight: 25,
+                            columns: [
+                              DataColumn(
+                                label: Text('BMI'),
+                              ),
+                              DataColumn(
+                                label: Text('判定'),
+                              ),
+                            ],
+                            rows: [
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('16未満')),
+                                  DataCell(Text('痩せすぎ')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('16~17未満')),
+                                  DataCell(Text('痩せ')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('17~18.5未満')),
+                                  DataCell(Text('痩せぎみ')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('18.5~25未満')),
+                                  DataCell(Text('普通体重')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('25~30未満')),
+                                  DataCell(Text('前肥満')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('30~35未満')),
+                                  DataCell(Text('肥満(1度)')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('35~40未満')),
+                                  DataCell(Text('肥満(2度)')),
+                                ],
+                              ),
+                              DataRow(
+                                cells: [
+                                  DataCell(Text('40以上')),
+                                  DataCell(Text('肥満(3度)')),
                                 ],
                               ),
                             ],
