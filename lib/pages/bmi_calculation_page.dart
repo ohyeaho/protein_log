@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
+import 'package:protein_log/model/bmi_formula.dart';
 
 class BmiCalculationPage extends StatefulWidget {
   const BmiCalculationPage({Key? key}) : super(key: key);
@@ -13,6 +14,10 @@ class BmiCalculationPage extends StatefulWidget {
 class _BmiCalculationPageState extends State<BmiCalculationPage> {
   int height = 170;
   int weight = 60;
+  String bmi = '0';
+  String standardWeight = '0';
+  String lowWeight = '0';
+  String highWeight = '0';
 
   @override
   Widget build(BuildContext context) {
@@ -270,14 +275,16 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            // ProteinFormula calc = ProteinFormula(
-                            //   weight: weight,
-                            //   motion: _index,
-                            //   ageId: ageId,
-                            // );
-                            // setState(() {
-                            //   result = calc.resultProtein()!;
-                            // });
+                            BmiFormula calc = BmiFormula(
+                              height: height,
+                              weight: weight,
+                            );
+                            setState(() {
+                              bmi = calc.resultBmi()!;
+                              standardWeight = calc.resultStandardWeight()!;
+                              lowWeight = calc.resultLowWeight()!;
+                              highWeight = calc.resultHighWeight()!;
+                            });
                           },
                           child: FittedBox(
                             child: Text(
@@ -299,7 +306,7 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                               children: [
                                 Text('BMI'),
                                 Text(
-                                  '19.7',
+                                  bmi,
                                   style: TextStyle(fontSize: 30),
                                 ),
                                 SizedBox(),
@@ -319,7 +326,7 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                                   textBaseline: TextBaseline.alphabetic,
                                   children: [
                                     Text(
-                                      '64.7',
+                                      standardWeight,
                                       style: TextStyle(fontSize: 30),
                                     ),
                                     Text('kg'),
@@ -342,7 +349,7 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '54.4',
+                                          lowWeight,
                                           style: TextStyle(fontSize: 20),
                                         ),
                                         Text(
@@ -355,7 +362,7 @@ class _BmiCalculationPageState extends State<BmiCalculationPage> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '73.5',
+                                          highWeight,
                                           style: TextStyle(fontSize: 20),
                                         ),
                                         Text(
