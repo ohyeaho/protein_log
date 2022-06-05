@@ -22,6 +22,7 @@ class _AddPageState extends State<AddPage> {
       listener: BannerAdListener(),
     );
     myBanner.load();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('項目の追加'),

@@ -50,7 +50,7 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
         children: [
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(40.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
                   Expanded(
@@ -168,53 +168,54 @@ class _IntakeCalculationPageState extends State<IntakeCalculationPage> {
                   ),
                   Expanded(
                     child: Card(
-                        child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text('10代ですか？'),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Row(
-                              children: [
-                                Radio(
-                                  value: 1,
-                                  groupValue: ageId,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      radioButtonItem = 'はい';
-                                      ageId = 1;
-                                    });
-                                  },
-                                ),
-                                Text(
-                                  'はい',
-                                  style: new TextStyle(fontSize: 17.0),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Radio(
-                                  value: 2,
-                                  groupValue: ageId,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      radioButtonItem = 'いいえ';
-                                      ageId = 2;
-                                    });
-                                  },
-                                ),
-                                Text(
-                                  'いいえ',
-                                  style: new TextStyle(fontSize: 17.0),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    )),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text('10代ですか？'),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Row(
+                                children: [
+                                  Radio(
+                                    value: 1,
+                                    groupValue: ageId,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        radioButtonItem = 'はい';
+                                        ageId = 1;
+                                      });
+                                    },
+                                  ),
+                                  Text(
+                                    'はい',
+                                    style: new TextStyle(fontSize: 17.0),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Radio(
+                                    value: 2,
+                                    groupValue: ageId,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        radioButtonItem = 'いいえ';
+                                        ageId = 2;
+                                      });
+                                    },
+                                  ),
+                                  Text(
+                                    'いいえ',
+                                    style: new TextStyle(fontSize: 17.0),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
                   ),
                   Expanded(
                     child: Padding(

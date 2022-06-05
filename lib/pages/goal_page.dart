@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:protein_log/model/admob.dart';
+import 'package:protein_log/pages/bmi_calculation_page.dart';
 import 'package:protein_log/pages/intake_calculation_page.dart';
 
 class GoalPage extends StatefulWidget {
@@ -115,16 +116,32 @@ class _GoalPageState extends State<GoalPage> {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => IntakeCalculationPage(),
-                  ),
-                );
-              },
-              child: Text('たんぱく質目安計算'),
+            Column(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IntakeCalculationPage(),
+                      ),
+                    );
+                  },
+                  child: Text('たんぱく質目安計算'),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BmiCalculationPage(),
+                      ),
+                    );
+                  },
+                  child: Text('BMI計算'),
+                ),
+              ],
             ),
             Container(
               height: height * 0.06,
