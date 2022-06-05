@@ -6,14 +6,14 @@ class AdMob {
     // iOSとAndroidで広告ユニットIDを分岐させる
     if (Platform.isAndroid) {
       // Androidの広告ユニットID
-      bannerUnitId = 'ca-app-pub-6583499550754592/9410554180';
+      // bannerUnitId = 'ca-app-pub-6583499550754592/9410554180';
       //テスト用
-      // bannerUnitId = 'ca-app-pub-3940256099942544/6300978111';
+      bannerUnitId = 'ca-app-pub-3940256099942544/6300978111';
     } else if (Platform.isIOS) {
       // iOSの広告ユニットID
-      bannerUnitId = 'ca-app-pub-6583499550754592/3548725559';
+      // bannerUnitId = 'ca-app-pub-6583499550754592/3548725559';
       //テスト用
-      // bannerUnitId = 'ca-app-pub-3940256099942544/2934735716';
+      bannerUnitId = 'ca-app-pub-3940256099942544/2934735716';
     }
     return bannerUnitId;
   }
